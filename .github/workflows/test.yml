@@ -4,38 +4,18 @@ on: [push, pull_request]
 
 jobs:
   build:
-
-    runs-on: self-hosted
-    #runs-on: [ubuntu-latest]
-    #runs-on: [windows-latest]
-
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Run a one-line script
-      run: echo Hello, world!
-    #- name: Run a multi-line script
-    #  run: |
-    #    docker run -t ubuntu:18.04 ps
-    #    docker run -t ubuntu:18.04 echo $(tty)
-    - run: |
-        find --help
-        where find
-    - run: |
-        find --help
-        where find
-      shell: cmd
-    - uses: actions/github-script@0.3.0
-      with:
-        debug: true
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        script: |
-          console.log("hello")
-          const content = await github.repos.getContents({
-            owner: 'TingluoHuang',
-            repo: 'main',
-            path: 'action.yml'
-          })
-          console.log(content)
-          console.log(content.data.content)
-          console.log(Buffer.from(content.data.content, 'base64').toString())
-          
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - run: |
+          if [ ! -e gen.txt ]; then
+            echo hello > gen.txt
+            git config user.email "github-actions-bot@github.com"
+            git config user.name "github-actions"
+            git add gen.txt
+            git commit -m "generated"
+            git push
+          fi
+
